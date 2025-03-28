@@ -1,0 +1,58 @@
+# Création des users
+curl -i -X POST -H "Content-Type: application/json" -d '{"username":"AlanS","email":"alan@gmail.com","password":"alan"}' http://dai.daibrgclesa.ch/users
+curl -i -X POST -H "Content-Type: application/json" -d '{"username":"CalvinG","email":"calvin@gmail.com","password":"calvin"}' http://dai.daibrgclesa.ch/users
+curl -i -X POST -H "Content-Type: application/json" -d '{"username":"EstebanL","email":"esteban@gmail.com","password":"esteban"}' http://dai.daibrgclesa.ch/users
+curl -i -X POST -H "Content-Type: application/json" -d '{"username":"RemiB","email":"remi@gmail.com","password":"remi"}' http://dai.daibrgclesa.ch/users
+curl -i -X POST -H "Content-Type: application/json" -d '{"username":"RemiB","email":"remi@gmail.com","password":"remi"}' http://dai.daibrgclesa.ch/users 	# Erreur conflict
+curl -i -X POST -H "Content-Type: application/json" -d '{"username":"RemiB","email":"remi@gmail.com"}' http://dai.daibrgclesa.ch/users 				# Erreur bad request
+
+# Création des jeux
+curl -i -X POST -H "Content-Type: application/json" -d '{"name":"Minecraft"}' http://dai.daibrgclesa.ch/games
+curl -i -X POST -H "Content-Type: application/json" -d '{"name":"Fornite"}' http://dai.daibrgclesa.ch/games
+curl -i -X POST -H "Content-Type: application/json" -d '{"name":"Sims 4"}' http://dai.daibrgclesa.ch/games
+curl -i -X POST -H "Content-Type: application/json" -d '{"name":"Palword"}' http://dai.daibrgclesa.ch/games
+curl -i -X POST -H "Content-Type: application/json" -d '{"name":"Sims 4"}' http://dai.daibrgclesa.ch/games	# Erreur conflict
+curl -i -X POST -H "Content-Type: application/json" -d '{"}' http://dai.daibrgclesa.ch/games			# Erreur bad request
+
+
+# Attribution des jeux
+curl -i --cookie user=0 -X POST -H "Content-Type: application/json" -d '{"game":{"id":0},"score":10,"hourPlayed":5}' http://dai.daibrgclesa.ch/users/0/games
+curl -i --cookie user=0 -X POST -H "Content-Type: application/json" -d '{"game":{"id":1},"score":20,"hourPlayed":10}' http://dai.daibrgclesa.ch/users/1/games
+curl -i --cookie user=0 -X POST -H "Content-Type: application/json" -d '{"game":{"id":2},"score":30,"hourPlayed":15}' http://dai.daibrgclesa.ch/users/2/games
+curl -i --cookie user=1 -X POST -H "Content-Type: application/json" -d '{"game":{"id":1},"score":12,"hourPlayed":30}' http://dai.daibrgclesa.ch/users/1/games
+curl -i --cookie user=2 -X POST -H "Content-Type: application/json" -d '{"game":{"id":1},"score":90,"hourPlayed":8}' http://dai.daibrgclesa.ch/users/1/games
+curl -i --cookie user=2 -X POST -H "Content-Type: application/json" -d '{"game":{"id":3},"score":22,"hourPlayed":128}' http://dai.daibrgclesa.ch/users/3/games
+curl -i --cookie user=7 -X POST -H "Content-Type: application/json" -d '{"game":{"id":3},"score":22,"hourPlayed":128}' http://dai.daibrgclesa.ch/users/7/games 	# Erreur 401 unatuhorized
+curl -i --cookie user=1 -X POST -H "Content-Type: application/json" -d '{"game":{"id":0}}' http://dai.daibrgclesa.ch/users/1/games 				# Ok
+
+# Récupérer information d'un user
+curl -i -X GET -H "Content-Type: application/json" "http://dai.daibrgclesa.ch/users?username=EstebanL"
+curl -i -X GET -H "Content-Type: application/json" "http://dai.daibrgclesa.ch/users?username=blabla" # Erreur
+
+# Récupérer la liste des users
+curl -i -X GET -H "Content-Type: application/json" "http://dai.daibrgclesa.ch/users"
+
+# Récupérer la liste des jeux
+curl -i -X GET -H "Content-Type: application/json" "http://dai.daibrgclesa.ch/games"
+
+# Récupérer les jeux d'un user
+curl -i --cookie user=0 -X GET -H "Content-Type: application/json" http://dai.daibrgclesa.ch/users/0
+curl -i --cookie user=1 -X GET -H "Content-Type: application/json" http://dai.daibrgclesa.ch/users/1
+curl -i --cookie user=3 -X GET -H "Content-Type: application/json" http://dai.daibrgclesa.ch/users/3
+curl -i --cookie user=4 -X GET -H "Content-Type: application/json" http://dai.daibrgclesa.ch/users/4 # Erreur 401 Unauthorized
+
+
+# Récupérer le leaderbord d'un jeu
+curl -i --cookie user=1 -X GET -H "Content-Type: application/json" http://dai.daibrgclesa.ch/games/1/leaderboard
+curl -i --cookie user=2 -X GET -H "Content-Type: application/json" http://dai.daibrgclesa.ch/games/2/leaderboard
+curl -i --cookie user=3 -X GET -H "Content-Type: application/json" http://dai.daibrgclesa.ch/games/3/leaderboard
+curl -i --cookie user=5 -X GET -H "Content-Type: application/json" http://dai.daibrgclesa.ch/games/5/leaderboard # Erreur 404 Not Found
+
+# Supprimer tous les jeux de l'user 0
+curl -i --cookie user=0 -X DELETE -H "Content-Type: application/json" -d '{"game": {"id":0}}' http://dai.daibrgclesa.ch/users/0/games
+curl -i --cookie user=0 -X DELETE -H "Content-Type: application/json" -d '{"game": {"id":1}}' http://dai.daibrgclesa.ch/users/0/games
+curl -i --cookie user=0 -X DELETE -H "Content-Type: application/json" -d '{"game": {"id":2}}' http://dai.daibrgclesa.ch/users/0/games
+curl -i --cookie user=0 -X DELETE -H "Content-Type: application/json" -d '{"game": {"id":3}}' http://dai.daibrgclesa.ch/users/0/games # Erreur 404 Not Found
+
+# Récupérer les jeux de l'user 0 après suppresion
+curl -i --cookie user=0 -X GET -H "Content-Type: application/json" http://dai.daibrgclesa.ch/users/0
